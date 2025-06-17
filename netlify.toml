@@ -1,0 +1,44 @@
+[build]
+  command = "echo 'Skipping build step and using static files directly'"
+  publish = "public"
+  functions = "server/functions"
+
+[dev]
+  command = "npm run dev"
+  port = 8090
+  targetPort = 8090
+
+# Handle the Supabase redirects
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+# Handle the SPA routes
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Environment variable configuration
+[build.environment]
+  NODE_VERSION = "18"
+  VITE_APP_VERSION = "0.1.0-beta"
+
+# Optimize build performance
+[build.processing]
+  skip_processing = false
+
+[build.processing.css]
+  bundle = true
+  minify = true
+
+[build.processing.js]
+  bundle = true
+  minify = true
+
+[build.processing.html]
+  pretty_urls = true
+
+[build.processing.images]
+  compress = true

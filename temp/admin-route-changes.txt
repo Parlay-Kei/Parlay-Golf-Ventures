@@ -1,0 +1,15 @@
+// Add this route before the existing /admin/* route
+<Route path="/admin" element={
+  <RouteWithErrorBoundary routeName="admin-redirect">
+    <Navigate to="/admin/dashboard" replace />
+  </RouteWithErrorBoundary>
+} />
+
+// Update the existing /admin/* route to include Suspense
+<Route path="/admin/*" element={
+  <RouteWithErrorBoundary routeName="admin-routes">
+    <Suspense fallback={<PageLoader />}>
+      <AdminRoutes />
+    </Suspense>
+  </RouteWithErrorBoundary>
+} />

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="600" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="600" fill="#ffffff"/>
+
+  <!-- Title -->
+  <text x="400" y="50" 
+        font-family="Arial" 
+        font-size="24" 
+        font-weight="bold" 
+        text-anchor="middle" 
+        fill="#111827">
+    Sponsorship Tiers
+  </text>
+
+  <!-- Tier Boxes -->
+  <g>
+    <!-- Bronze Tier -->
+    <rect x="100" y="100" width="180" height="400" 
+          fill="#fef3c7" stroke="#d97706" stroke-width="2" rx="8"/>
+    <text x="190" y="140" 
+          font-family="Arial" 
+          font-size="20" 
+          font-weight="bold" 
+          text-anchor="middle" 
+          fill="#92400e">
+      DRIVEN
+    </text>
+    <text x="190" y="170" 
+          font-family="Arial" 
+          font-size="16" 
+          text-anchor="middle" 
+          fill="#92400e">
+      Basic Package
+    </text>
+
+    <!-- Silver Tier -->
+    <rect x="310" y="100" width="180" height="400" 
+          fill="#f3f4f6" stroke="#4b5563" stroke-width="2" rx="8"/>
+    <text x="400" y="140" 
+          font-family="Arial" 
+          font-size="20" 
+          font-weight="bold" 
+          text-anchor="middle" 
+          fill="#374151">
+      ASPIRING
+    </text>
+    <text x="400" y="170" 
+          font-family="Arial" 
+          font-size="16" 
+          text-anchor="middle" 
+          fill="#374151">
+      Enhanced Package
+    </text>
+
+    <!-- Gold Tier -->
+    <rect x="520" y="100" width="180" height="400" 
+          fill="#ecfdf5" stroke="#16a34a" stroke-width="2" rx="8"/>
+    <text x="610" y="140" 
+          font-family="Arial" 
+          font-size="20" 
+          font-weight="bold" 
+          text-anchor="middle" 
+          fill="#16a34a">
+      BREAKTHROUGH
+    </text>
+    <text x="610" y="170" 
+          font-family="Arial" 
+          font-size="16" 
+          text-anchor="middle" 
+          fill="#16a34a">
+      Premium Package
+    </text>
+  </g>
+
+  <!-- Features -->
+  <g font-family="Arial" font-size="14" fill="#374151">
+    <!-- Bronze Features -->
+    <text x="120" y="220">• Basic Branding</text>
+    <text x="120" y="250">• Event Access</text>
+    <text x="120" y="280">• Social Media</text>
+    <text x="120" y="310">• Newsletter</text>
+
+    <!-- Silver Features -->
+    <text x="330" y="220">• Enhanced Branding</text>
+    <text x="330" y="250">• Priority Access</text>
+    <text x="330" y="280">• Data Insights</text>
+    <text x="330" y="310">• AR Integration</text>
+    <text x="330" y="340">• IoT Analytics</text>
+
+    <!-- Gold Features -->
+    <text x="540" y="220">• Premium Branding</text>
+    <text x="540" y="250">• VIP Access</text>
+    <text x="540" y="280">• Full Data Suite</text>
+    <text x="540" y="310">• Custom AR/VR</text>
+    <text x="540" y="340">• Smart Equipment</text>
+    <text x="540" y="370">• Impact Tracking</text>
+  </g>
+
+  <!-- Price Tags -->
+  <g font-family="Arial" font-weight="bold" fill="#374151">
+    <text x="190" y="460" text-anchor="middle" font-size="18">Starting at</text>
+    <text x="190" y="485" text-anchor="middle" font-size="24">$5,000</text>
+    
+    <text x="400" y="460" text-anchor="middle" font-size="18">Starting at</text>
+    <text x="400" y="485" text-anchor="middle" font-size="24">$15,000</text>
+    
+    <text x="610" y="460" text-anchor="middle" font-size="18">Starting at</text>
+    <text x="610" y="485" text-anchor="middle" font-size="24">$25,000</text>
+  </g>
+</svg> 

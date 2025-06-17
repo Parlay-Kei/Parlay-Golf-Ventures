@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parlay Golf Ventures - Debug Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 30px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2e7d32;
+            margin-top: 0;
+        }
+        .btn {
+            display: inline-block;
+            background-color: #2e7d32;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            text-decoration: none;
+            margin-top: 20px;
+        }
+        pre {
+            background-color: #f0f0f0;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Parlay Golf Ventures - Debug Page</h1>
+        <p>This is a static HTML page that should always display, regardless of any React or JavaScript errors.</p>
+        
+        <h2>Environment Check</h2>
+        <div id="env-info">Loading environment information...</div>
+        
+        <h2>Browser Information</h2>
+        <div id="browser-info">Loading browser information...</div>
+        
+        <a href="/" class="btn">Go to Homepage</a>
+    </div>
+
+    <script>
+        // Display environment information
+        document.getElementById('env-info').innerHTML = `
+            <pre>URL: ${window.location.href}
+Pathname: ${window.location.pathname}</pre>
+        `;
+        
+        // Display browser information
+        document.getElementById('browser-info').innerHTML = `
+            <pre>User Agent: ${navigator.userAgent}
+Platform: ${navigator.platform}</pre>
+        `;
+    </script>
+</body>
+</html>

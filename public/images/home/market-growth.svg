@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="600" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="600" fill="#ffffff"/>
+  
+  <!-- Grid Lines -->
+  <g stroke="#e5e7eb" stroke-width="1">
+    <line x1="100" y1="50" x2="100" y2="500"/>
+    <line x1="100" y1="500" x2="700" y2="500"/>
+    <line x1="100" y1="400" x2="700" y2="400"/>
+    <line x1="100" y1="300" x2="700" y2="300"/>
+    <line x1="100" y1="200" x2="700" y2="200"/>
+    <line x1="100" y1="100" x2="700" y2="100"/>
+  </g>
+
+  <!-- Growth Line -->
+  <path d="M 150,450 Q 300,420 450,350 T 700,200" 
+        fill="none" 
+        stroke="#16a34a" 
+        stroke-width="4"/>
+
+  <!-- Data Points -->
+  <g fill="#16a34a">
+    <circle cx="150" cy="450" r="6"/>
+    <circle cx="300" cy="420" r="6"/>
+    <circle cx="450" cy="350" r="6"/>
+    <circle cx="600" cy="270" r="6"/>
+    <circle cx="700" cy="200" r="6"/>
+  </g>
+
+  <!-- Labels -->
+  <g font-family="Arial" font-size="14" fill="#374151">
+    <text x="140" y="520">2020</text>
+    <text x="290" y="520">2021</text>
+    <text x="440" y="520">2022</text>
+    <text x="590" y="520">2023</text>
+    <text x="690" y="520">2024</text>
+    
+    <text x="60" y="505">0%</text>
+    <text x="60" y="405">2%</text>
+    <text x="60" y="305">4%</text>
+    <text x="60" y="205">6%</text>
+    <text x="60" y="105">8%</text>
+  </g>
+
+  <!-- Title and Subtitle -->
+  <text x="400" y="50" 
+        font-family="Arial" 
+        font-size="24" 
+        font-weight="bold" 
+        text-anchor="middle" 
+        fill="#111827">
+    Golf Market Growth
+  </text>
+  <text x="400" y="80" 
+        font-family="Arial" 
+        font-size="16" 
+        text-anchor="middle" 
+        fill="#6b7280">
+    4.6% CAGR in Personalized Equipment
+  </text>
+
+  <!-- Annotations -->
+  <g font-family="Arial" font-size="12" fill="#6b7280">
+    <text x="720" y="190">Projected</text>
+    <text x="720" y="205">Growth</text>
+  </g>
+</svg> 

@@ -1,0 +1,12 @@
+{
+  "name": "pgv-netlify-functions",
+  "version": "1.0.0",
+  "description": "Netlify Functions for Parlay Golf Ventures",
+  "main": "index.js",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.38.4",
+    "stripe": "^14.5.0"
+  },
+  "author": "Parlay Golf Ventures",
+  "license": "ISC"
+}

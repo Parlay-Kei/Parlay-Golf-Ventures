@@ -1,0 +1,409 @@
+/* Font imports */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Core brand colors */
+  --color-primary: #014421;
+  --color-secondary: #D4AF37;
+  --color-accent: #5C1A1B;
+  --color-support: #0D0D0D;
+  --color-background: #F6F4EF;
+  
+  /* Text colors */
+  --color-text-light: #FDF6E3;
+  --color-text-gold: #B08A30; /* Updated to darker gold for better contrast */
+  
+  /* Button colors */
+  --color-button-hover: #9C7C2C; /* Darker gold for hover states */
+  
+  /* Shadows */
+  --shadow-header: 0 2px 8px rgba(0,0,0,0.15);
+  --shadow-card: 0 4px 12px rgba(0,0,0,0.08);
+  --shadow-card-hover: 0 8px 24px rgba(0,0,0,0.12);
+  --shadow-button-hover: 0 4px 12px rgba(212, 175, 55, 0.3);
+  --shadow-text-glow: 0 0 4px rgba(212, 175, 55, 0.5);
+  
+  /* PGV Brand Colors */
+  --pgv-forest: #014421;
+  --pgv-forest-dark: #012016; /* Darker forest green for better contrast */
+  --pgv-gold: #D4AF37;
+  --pgv-gold-dark: #B08A30; /* Darker gold for better contrast on light backgrounds */
+  --pgv-gold-darker: #9C7C2C; /* Even darker gold for hover states */
+  --pgv-cream: #F6F4EF;
+  --pgv-rust: #5C1A1B;
+  --pgv-turf: #3A6B35;
+  --pgv-clay: #A52A2A;
+  
+  /* Text Colors */
+  --text-main: #333333;
+  --text-subtle: #666666;
+  --text-inverse: #FFFFFF;
+  
+  /* Focus ring colors */
+  --focus-ring: #D4AF37;
+  --focus-ring-offset: 2px;
+}
+
+@layer base {
+  body {
+    @apply bg-background text-support font-sans;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif;
+  }
+}
+
+@layer components {
+  /* Header Styles */
+  .pgv-header {
+    @apply bg-gradient-to-b from-primary to-primary-dark text-text-light shadow-lg;
+    box-shadow: var(--shadow-header);
+  }
+
+  /* Button Styles */
+  .pgv-button {
+    @apply bg-pgv-gold-dark text-pgv-forest-dark font-semibold px-6 py-2.5 rounded-xl
+    shadow-md hover:bg-pgv-gold-darker focus-visible:ring-2 focus-visible:ring-pgv-gold focus-visible:ring-offset-2
+    transition-all duration-300;
+  }
+
+  .pgv-button:hover {
+    @apply bg-[var(--color-button-hover)] shadow-lg;
+    box-shadow: var(--shadow-button-hover);
+  }
+
+  .pgv-button-outline {
+    @apply border-2 border-pgv-gold-dark bg-transparent text-pgv-gold-dark
+    font-semibold px-6 py-2.5 rounded-xl hover:bg-pgv-gold-dark/10 focus-visible:ring-2 focus-visible:ring-pgv-gold focus-visible:ring-offset-2
+    hover:shadow-md transition-all duration-300;
+  }
+
+  .pgv-button-secondary {
+    @apply bg-primary text-text-inverse font-semibold px-6 py-2.5 rounded-xl
+    shadow-md hover:bg-primary-light focus-visible:ring-2 focus-visible:ring-pgv-gold focus-visible:ring-offset-2
+    transition-all duration-300;
+  }
+
+  /* Navigation Styles */
+  .pgv-nav {
+    @apply bg-gradient-to-r from-primary to-[#032B1E];
+  }
+
+  .pgv-nav-link {
+    @apply text-text-light transition-colors relative pb-1 border-b-2 border-transparent hover:border-pgv-gold;
+  }
+
+  .pgv-nav-link.active {
+    @apply text-[var(--color-text-gold)] border-b-2 border-pgv-gold;
+    text-shadow: var(--shadow-text-glow);
+  }
+
+  .pgv-nav-link.active::after {
+    content: '';
+    @apply absolute bottom-0 left-0 w-full h-0.5 bg-secondary;
+  }
+
+  /* Card Styles */
+  .pgv-card {
+    @apply bg-white rounded-xl shadow-card border border-[hsl(var(--accent))/0.1] p-6
+    hover:shadow-card-hover transition-all duration-300;
+  }
+
+  .pgv-card:hover {
+    @apply shadow-lg;
+    box-shadow: var(--shadow-card-hover);
+    backdrop-filter: blur(8px) brightness(1.05);
+    transform: translateY(-3px);
+  }
+
+  /* Glass Effect */
+  .pgv-glass {
+    @apply bg-white/70 backdrop-blur-md border border-white/30 shadow-md rounded-xl;
+  }
+
+  /* Gold Foil Text Effect */
+  .pgv-gold-text {
+    @apply text-pgv-gold-dark font-semibold;
+    text-shadow: 0 0 2px rgba(176, 138, 48, 0.3);
+  }
+  
+  /* Enhanced Gold Foil Text with Texture */
+  .pgv-gold-foil-text {
+    position: relative;
+    background: linear-gradient(to right, #B08A30, #9C7C2C, #B08A30);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    display: inline-block;
+    text-shadow: 0 0 2px rgba(156, 124, 44, 0.3);
+    font-weight: 600;
+  }
+  
+  .pgv-gold-foil-text::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('/images/gold-foil-texture.svg');
+    background-size: cover;
+    opacity: 0.4;
+    mix-blend-mode: overlay;
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+
+  /* Wave Divider */
+  .pgv-wave-divider {
+    position: relative;
+    height: 80px;
+    width: 100%;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center bottom;
+  }
+
+  .pgv-wave-divider-primary {
+    background-image: url('/images/wave-divider.svg');
+  }
+
+  .pgv-wave-divider-gold {
+    background-image: url('/images/wave-divider.svg');
+    transform: scaleX(-1);
+  }
+
+  /* Section Title with Gold Foil Texture */
+  .pgv-section-title {
+    @apply relative inline-block font-bold text-3xl mb-6;
+  }
+
+  .pgv-section-title::after {
+    content: '';
+    @apply absolute -bottom-2 left-0 w-1/3 h-1 bg-secondary rounded-full;
+  }
+  
+  /* Enhanced Section Title with Gold Foil */
+  .pgv-section-title-foil {
+    @apply relative inline-block font-bold text-3xl mb-6;
+    position: relative;
+  }
+  
+  .pgv-section-title-foil::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -15px;
+    width: calc(100% + 30px);
+    height: calc(100% + 20px);
+    background-image: url('/images/gold-foil-texture.svg');
+    background-size: cover;
+    opacity: 0.15;
+    border-radius: 8px;
+    z-index: -1;
+  }
+
+  /* Glassmorphism Card Effect */
+  .pgv-glass-card {
+    @apply relative overflow-hidden rounded-xl;
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+  }
+
+  .pgv-glass-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    background: rgba(255, 255, 255, 0.75);
+  }
+
+  /* Dark Glass Card Effect */
+  .pgv-glass-card-dark {
+    @apply relative overflow-hidden rounded-xl;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+  }
+
+  /* Gold Text Effect */
+  .pgv-gold-text {
+    @apply text-secondary;
+    text-shadow: 0 0 10px rgba(214, 173, 96, 0.3);
+  }
+
+  /* Outline Button */
+  .pgv-button-outline {
+    @apply border-2 border-pgv-gold-dark bg-transparent text-pgv-gold-dark
+    font-semibold px-6 py-2.5 rounded-xl hover:bg-pgv-gold-dark/10 focus-visible:ring-2 focus-visible:ring-pgv-gold focus-visible:ring-offset-2
+    hover:shadow-md transition-all duration-300;
+  }
+
+  /* Wave Divider */
+  .pgv-wave-divider {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23F9F9F9' fill-opacity='1' d='M0,128L48,144C96,160,192,192,288,197.3C384,203,480,181,576,165.3C672,149,768,139,864,149.3C960,160,1056,192,1152,197.3C1248,203,1344,181,1392,170.7L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E");
+    background-size: cover;
+    background-repeat: no-repeat;
+  }
+
+  /* Gold Wave Divider */
+  .pgv-wave-divider-gold {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23D6AD60' fill-opacity='0.3' d='M0,128L48,144C96,160,192,192,288,197.3C384,203,480,181,576,165.3C672,149,768,139,864,149.3C960,160,1056,192,1152,197.3C1248,203,1344,181,1392,170.7L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E");
+    background-size: cover;
+    background-repeat: no-repeat;
+  }
+
+  /* Green Wave Divider */
+  .pgv-wave-divider-green {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%230F3D3E' fill-opacity='0.3' d='M0,128L48,144C96,160,192,192,288,197.3C384,203,480,181,576,165.3C672,149,768,139,864,149.3C960,160,1056,192,1152,197.3C1248,203,1344,181,1392,170.7L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E");
+    background-size: cover;
+    background-repeat: no-repeat;
+  }
+
+  /* Card with hover effect */
+  .pgv-card {
+    @apply bg-white rounded-xl shadow-card border border-[hsl(var(--accent))/0.1] p-6
+    hover:shadow-card-hover transition-all duration-300;
+  }
+
+  /* Section styling */
+  .pgv-section {
+    @apply py-16 md:py-24 relative overflow-hidden;
+  }
+
+  /* Section with background */
+  .pgv-section-primary {
+    @apply bg-primary text-text-light;
+  }
+
+  .pgv-section-secondary {
+    @apply bg-secondary/10 text-text-dark;
+  }
+
+  .pgv-section-light {
+    @apply bg-background text-text-dark;
+  }
+
+  /* Container with max width */
+  .pgv-container {
+    @apply container mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Heading styles */
+  .pgv-heading-1 {
+    @apply font-serif text-4xl md:text-5xl lg:text-6xl font-bold;
+  }
+
+  .pgv-heading-2 {
+    @apply font-serif text-3xl md:text-4xl font-bold;
+  }
+
+  .pgv-heading-3 {
+    @apply font-serif text-2xl md:text-3xl font-bold;
+  }
+
+  /* Gradient text */
+  .pgv-gradient-text {
+    @apply text-transparent bg-clip-text bg-gradient-to-r from-secondary to-secondary-light;
+  }
+
+  /* Navbar styles when scrolled */
+  .pgv-navbar-scrolled {
+    @apply bg-primary/95 backdrop-blur-sm shadow-md;
+  }
+}
+
+@layer utilities {
+  /* Text utility classes */
+  .text-support {
+    color: var(--color-support);
+  }
+}
+
+/* Custom Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.5s ease-out;
+}
+
+.animate-pulse-slow {
+  animation: pulse 3s infinite;
+}
+
+/* Z-index management */
+.header-dropdown {
+  z-index: 150;
+}
+
+.site-header {
+  z-index: 100;
+}
+
+.page-content {
+  z-index: 10;
+}
+
+/* Update dropdown menu positioning */
+[data-dropdown-menu] {
+  z-index: 150;
+  /* Add buffer space to prevent overlapping with trigger button */
+  top: 100%;
+  margin-top: 0.5rem;
+}
+
+/* Improve dropdown trigger button clickability */
+[data-dropdown-toggle] {
+  position: relative;
+  z-index: 100;
+  padding: 0.5rem;
+  margin: -0.5rem;
+}
+
+/* Create space for menu items */
+.pgv-nav-link {
+  position: relative;
+  padding-bottom: 0.25rem;
+}
+
+/* Button hover effect for improved UX */
+button:focus-visible {
+  outline: 2px solid var(--pgv-gold);
+  outline-offset: 2px;
+}
+
+/* Make sure the page sections don't overlap with the header */
+section {
+  position: relative;
+  z-index: 10;
+}

@@ -1,0 +1,416 @@
+import { ToastProvider } from "@/components/ui/toast-provider";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Routes, Route, Navigate } from "react-router-dom";
+import { FeatureProvider } from "@/lib/features.tsx";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import { initializeErrorMonitoring } from "@/lib/services/errorMonitoring";
+import { BetaBanner } from "@/components/beta/BetaBanner";
+import { lazy, Suspense, useEffect, useState } from "react";
+import { useScrollToTop } from "./hooks/useScrollToTop";
+import { LoadingProvider } from "@/contexts/LoadingContext";
+import { LoadingOverlay, LoadingScreen } from "@/components/ui/loading-overlay";
+import { DEV_CONFIG, FEATURES } from "@/lib/config/env";
+import RouteSecurityProvider from "@/components/security/RouteSecurityProvider";
+import ErrorBoundary from "@/components/ErrorBoundary";
+
+// Import global styles
+import "@/styles/globals.css";
+
+// Lazy load all components including previously non-lazy ones
+const Index = lazy(() => import("./pages/Index"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+const ContributionRoutes = lazy(() => import("./routes/contributionRoutes"));
+
+// Lazy load admin routes
+const AdminRoutes = lazy(() => import("./routes/adminRoutes"));
+
+// Lazy load all other components
+const Upload = lazy(() => import("./pages/Upload"));
+const Academy = lazy(() => import("./pages/Academy"));
+const ShortGameSecrets = lazy(() => import("./pages/ShortGameSecrets"));
+const AcademyDashboard = lazy(() => import("./pages/AcademyDashboard"));
+const ScheduleMentorReview = lazy(() => import("./pages/ScheduleMentorReview"));
+const SignUp = lazy(() => import("./pages/SignUp"));
+const Login = lazy(() => import("./pages/Login"));
+const CommunitySignUp = lazy(() => import("./pages/CommunitySignUp"));
+const BetaFeedback = lazy(() => import("./pages/beta/Feedback"));
+const Subscription = lazy(() => import("./pages/Subscription"));
+const SubscriptionNew = lazy(() => import("./pages/SubscriptionNew"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const Membership = lazy(() => import("./pages/Membership"));
+const HybridTournament = lazy(() => import("./pages/HybridTournament"));
+const News = lazy(() => import("./pages/News"));
+const RequestPasswordReset = lazy(() => import("./pages/RequestPasswordReset"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
+const VerifyEmail = lazy(() => import("./pages/VerifyEmail"));
+const Profile = lazy(() => import("./pages/Profile"));
+const ComingSoon = lazy(() => import("./pages/ComingSoon"));
+const Community = lazy(() => import("./pages/Community"));
+const JoinFree = lazy(() => import("./pages/JoinFree"));
+const LockedContentPage = lazy(() => import("./pages/LockedContentPage"));
+const Search = lazy(() => import("./pages/Search"));
+const BillingManagement = lazy(() => import("./pages/BillingManagement"));
+const PerformanceDemo = lazy(() => import("./components/examples/PerformanceDemo"));
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
+// Initialize error monitoring if enabled
+if (!DEV_CONFIG.ERROR_MONITORING.ENABLED && process.env.VITE_ENABLE_ERROR_MONITORING === 'true') {
+  initializeErrorMonitoring();
+}
+
+// Loading component for Suspense fallback
+const PageLoader = () => {
+  return <LoadingScreen />;
+};
+
+// ScrollToTop component to handle scrolling on route changes
+const ScrollToTop = () => {
+  useScrollToTop();
+  return null;
+};
+
+// Client-side only components wrapper to prevent hydration issues
+const ClientOnly = ({ children }: { children: React.ReactNode }) => {
+  const [mounted, setMounted] = useState(false);
+  
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+  
+  if (!mounted) return null;
+  
+  return <>{children}</>;
+};
+
+// Wrap route with ErrorBoundary
+const RouteWithErrorBoundary = ({ 
+  children, 
+  routeName 
+}: { 
+  children: React.ReactNode, 
+  routeName: string 
+}) => {
+  return (
+    <ErrorBoundary routeName={routeName}>
+      {children}
+    </ErrorBoundary>
+  );
+};
+
+const App = ({ ssrMode = false }: { ssrMode?: boolean }) => {
+  const [isMounted, setIsMounted] = useState(false);
+  
+  useEffect(() => {
+    setIsMounted(true);
+    
+    if (typeof window !== 'undefined' && (window as any).__IS_SSR__) {
+      (window as any).__IS_SSR__ = false;
+    }
+    
+    if (DEV_CONFIG.LOGGING.VERBOSE) {
+      console.log('App mounted, routes available');
+    }
+  }, []);
+
+  if (!isMounted) {
+    return <LoadingScreen />;
+  }
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <FeatureProvider>
+        <LoadingProvider>
+          <ToastProvider>
+            <TooltipProvider>
+              <ScrollToTop />
+              {/* Wrap components that might cause hydration issues in ClientOnly */}
+              <ClientOnly>
+                <BetaBanner />
+                <LoadingOverlay />
+              </ClientOnly>
+              <RouteSecurityProvider>
+                <ErrorBoundary routeName="root">
+                  <Suspense fallback={<PageLoader />}>
+                    <Routes>
+                      {/* Admin Routes - Now using the lazy-loaded AdminRoutes component */}
+                      <Route path="/admin/*" element={
+                        <RouteWithErrorBoundary routeName="admin-routes">
+                          <AdminRoutes />
+                        </RouteWithErrorBoundary>
+                      } />
+                      
+                      {/* Public Routes - No protection needed */}
+                      <Route path="/" element={
+                        <RouteWithErrorBoundary routeName="home">
+                          <Suspense fallback={<PageLoader />}>
+                            <Index />
+                          </Suspense>
+                        </RouteWithErrorBoundary>
+                      } />
+                      <Route path="/academy" element={
+                        <RouteWithErrorBoundary routeName="academy">
+                          <Suspense fallback={<PageLoader />}>
+                            <Academy />
+                          </Suspense>
+                        </RouteWithErrorBoundary>
+                      } />
+                      <Route path="/academy/short-game-secrets" element={
+                        <RouteWithErrorBoundary routeName="short-game-secrets">
+                          <Suspense fallback={<PageLoader />}>
+                            <ShortGameSecrets />
+                          </Suspense>
+                        </RouteWithErrorBoundary>
+                      } />
+                      <Route path="/signup" element={
+                        <RouteWithErrorBoundary routeName="signup">
+                          <Suspense fallback={<PageLoader />}>
+                            <SignUp />
+                          </Suspense>
+                        </RouteWithErrorBoundary>
+                      } />
+                      <Route path="/login" element={
+                        <RouteWithErrorBoundary routeName="login">
+                          <Suspense fallback={<PageLoader />}>
+                            <Login />
+                          </Suspense>
+                        </RouteWithErrorBoundary>
+                      } />
+                      <Route path="/join-community" element={
+                        <RouteWithErrorBoundary routeName="join-community">
+                          <Suspense fallback={<PageLoader />}>
+                            <CommunitySignUp />
+                          </Suspense>
+                        </RouteWithErrorBoundary>
+                      } />
+                      <Route path="/join-free" element={
+                        <RouteWithErrorBoundary routeName="join-free">
+                          <Suspense fallback={<PageLoader />}>
+                            <JoinFree />
+                          </Suspense>
+                        </RouteWithErrorBoundary>
+                      } />
+                      <Route path="/membership" element={
+                        <RouteWithErrorBoundary routeName="membership">
+                          <Suspense fallback={<PageLoader />}>
+                            <Membership />
+                          </Suspense>
+                        </RouteWithErrorBoundary>
+                      } />
+                      <Route path="/coming-soon" element={
+                        <RouteWithErrorBoundary routeName="coming-soon">
+                          <Suspense fallback={<PageLoader />}>
+                            <ComingSoon />
+                          </Suspense>
+                        </RouteWithErrorBoundary>
+                      } />
+                      <Route path="/coming-soon/:contentId" element={
+                        <RouteWithErrorBoundary routeName="locked-content">
+                          <Suspense fallback={<PageLoader />}>
+                            <LockedContentPage />
+                          </Suspense>
+                        </RouteWithErrorBoundary>
+                      } />
+                      <Route path="/community" element={
+                        <RouteWithErrorBoundary routeName="community">
+                          <Suspense fallback={<PageLoader />}>
+                            <Community />
+                          </Suspense>
+                        </RouteWithErrorBoundary>
+                      } />
+                      <Route path="/search" element={
+                        <RouteWithErrorBoundary routeName="search">
+                          <Suspense fallback={<PageLoader />}>
+                            <Search />
+                          </Suspense>
+                        </RouteWithErrorBoundary>
+                      } />
+                      <Route path="/subscription" element={
+                        <RouteWithErrorBoundary routeName="subscription-redirect">
+                          <Suspense fallback={<PageLoader />}>
+                            <Membership />
+                          </Suspense>
+                        </RouteWithErrorBoundary>
+                      } />
+                      <Route path="/news" element={
+                        <RouteWithErrorBoundary routeName="news">
+                          <Suspense fallback={<PageLoader />}>
+                            <News />
+                          </Suspense>
+                        </RouteWithErrorBoundary>
+                      } />
+                      <Route path="/request-password-reset" element={
+                        <RouteWithErrorBoundary routeName="request-password-reset">
+                          <Suspense fallback={<PageLoader />}>
+                            <RequestPasswordReset />
+                          </Suspense>
+                        </RouteWithErrorBoundary>
+                      } />
+                      <Route path="/reset-password" element={
+                        <RouteWithErrorBoundary routeName="reset-password">
+                          <Suspense fallback={<PageLoader />}>
+                            <ResetPassword />
+                          </Suspense>
+                        </RouteWithErrorBoundary>
+                      } />
+                      <Route path="/verify-email" element={
+                        <RouteWithErrorBoundary routeName="verify-email">
+                          <Suspense fallback={<PageLoader />}>
+                            <VerifyEmail />
+                          </Suspense>
+                        </RouteWithErrorBoundary>
+                      } />
+                      
+                      {/* Protected Routes - User authentication required with specific roles */}
+                      <Route path="/upload" element={
+                        <RouteWithErrorBoundary routeName="upload">
+                          <Suspense fallback={<PageLoader />}>
+                            <ProtectedRoute requiredRole="student">
+                              <Upload />
+                            </ProtectedRoute>
+                          </Suspense>
+                        </RouteWithErrorBoundary>
+                      } />
+                      <Route path="/academy/dashboard" element={
+                        <RouteWithErrorBoundary routeName="academy-dashboard">
+                          <Suspense fallback={<PageLoader />}>
+                            <ProtectedRoute requiredRole="academy-member">
+                              <AcademyDashboard />
+                            </ProtectedRoute>
+                          </Suspense>
+                        </RouteWithErrorBoundary>
+                      } />
+                      <Route path="/academy/schedule-review" element={
+                        <RouteWithErrorBoundary routeName="schedule-review">
+                          <Suspense fallback={<PageLoader />}>
+                            <ProtectedRoute requiredRole="academy-member">
+                              <ScheduleMentorReview />
+                            </ProtectedRoute>
+                          </Suspense>
+                        </RouteWithErrorBoundary>
+                      } />
+                      <Route path="/membership/subscribe" element={
+                        <RouteWithErrorBoundary routeName="subscribe">
+                          <Suspense fallback={<PageLoader />}>
+                            <ProtectedRoute>
+                              <Subscription />
+                            </ProtectedRoute>
+                          </Suspense>
+                        </RouteWithErrorBoundary>
+                      } />
+                      <Route path="/subscription-new" element={
+                        <RouteWithErrorBoundary routeName="subscription-new">
+                          <Suspense fallback={<PageLoader />}>
+                            <ProtectedRoute>
+                              <SubscriptionNew />
+                            </ProtectedRoute>
+                          </Suspense>
+                        </RouteWithErrorBoundary>
+                      } />
+                      <Route path="/dashboard" element={
+                        <RouteWithErrorBoundary routeName="dashboard">
+                          <Suspense fallback={<PageLoader />}>
+                            <ProtectedRoute>
+                              <Dashboard />
+                            </ProtectedRoute>
+                          </Suspense>
+                        </RouteWithErrorBoundary>
+                      } />
+                      <Route path="/profile" element={
+                        <RouteWithErrorBoundary routeName="profile">
+                          <Suspense fallback={<PageLoader />}>
+                            <ProtectedRoute>
+                              <Profile />
+                            </ProtectedRoute>
+                          </Suspense>
+                        </RouteWithErrorBoundary>
+                      } />
+                      <Route path="/tournament" element={
+                        <RouteWithErrorBoundary routeName="tournament">
+                          <Suspense fallback={<PageLoader />}>
+                            <ProtectedRoute requiredRole="tournament-participant">
+                              <HybridTournament />
+                            </ProtectedRoute>
+                          </Suspense>
+                        </RouteWithErrorBoundary>
+                      } />
+                      <Route path="/billing" element={
+                        <RouteWithErrorBoundary routeName="billing">
+                          <Suspense fallback={<PageLoader />}>
+                            <ProtectedRoute>
+                              <BillingManagement />
+                            </ProtectedRoute>
+                          </Suspense>
+                        </RouteWithErrorBoundary>
+                      } />
+                      
+                      {/* Beta Routes */}
+                      <Route path="/beta/feedback" element={
+                        <RouteWithErrorBoundary routeName="beta-feedback">
+                          <Suspense fallback={<PageLoader />}>
+                            <ProtectedRoute requiredRole="beta">
+                              <BetaFeedback />
+                            </ProtectedRoute>
+                          </Suspense>
+                        </RouteWithErrorBoundary>
+                      } />
+                      
+                      {/* Contribution Routes - Phase 2 */}
+                      <Route path="/contribute" element={
+                        <RouteWithErrorBoundary routeName="contribute">
+                          <Suspense fallback={<PageLoader />}>
+                            <ProtectedRoute requiredRole="content-creator">
+                              <ContributionRoutes />
+                            </ProtectedRoute>
+                          </Suspense>
+                        </RouteWithErrorBoundary>
+                      } />
+                      <Route path="/contribute/*" element={
+                        <RouteWithErrorBoundary routeName="contribute-nested">
+                          <Suspense fallback={<PageLoader />}>
+                            <ProtectedRoute requiredRole="content-reviewer">
+                              <ContributionRoutes />
+                            </ProtectedRoute>
+                          </Suspense>
+                        </RouteWithErrorBoundary>
+                      } />
+                      
+                      {/* Performance Demo - Admin Only */}
+                      <Route path="/performance-demo" element={
+                        <RouteWithErrorBoundary routeName="performance-demo">
+                          <Suspense fallback={<PageLoader />}>
+                            <ProtectedRoute requireAdmin={true}>
+                              <PerformanceDemo />
+                            </ProtectedRoute>
+                          </Suspense>
+                        </RouteWithErrorBoundary>
+                      } />
+                      
+                      <Route path="*" element={
+                        <RouteWithErrorBoundary routeName="not-found">
+                          <Suspense fallback={<PageLoader />}>
+                            <NotFound />
+                          </Suspense>
+                        </RouteWithErrorBoundary>
+                      } />
+                    </Routes>
+                  </Suspense>
+                </ErrorBoundary>
+              </RouteSecurityProvider>
+            </TooltipProvider>
+          </ToastProvider>
+        </LoadingProvider>
+      </FeatureProvider>
+    </QueryClientProvider>
+  );
+};
+
+export default App;

@@ -1,0 +1,10 @@
+{
+  "name": "eslint-plugin-parlay",
+  "version": "1.0.0",
+  "description": "Custom ESLint rules for Parlay Golf Ventures",
+  "type": "module",
+  "main": "index.js",
+  "author": "Parlay Golf Ventures",
+  "license": "UNLICENSED",
+  "private": true
+}
