@@ -183,6 +183,14 @@ const userPosts: CommunityPost[] = [];
 const userComments: Record<string, Comment[]> = {};
 const userLikes: Record<string, string[]> = {}; // post_id -> user_ids
 
+// Replace all supabase.auth.getUser() calls with a mock user
+const MOCK_USER = {
+  id: 'mock-user',
+  username: 'mockuser',
+  full_name: 'Mock User',
+  avatar_url: null,
+};
+
 /**
  * Get community posts with pagination
  * @param limit Number of posts to fetch (default: 10)
@@ -196,10 +204,6 @@ export const getCommunityPosts = async (
   sortBy: SortOption = 'latest'
 ): Promise<{ posts: CommunityPost[]; total: number }> => {
   try {
-    // Get current user
-    const { data: userData } = await supabase.auth.getUser();
-    const currentUserId = userData?.user?.id;
-    
     // Combine mock and user-generated posts
     let allPosts = [...MOCK_POSTS, ...userPosts];
     
@@ -225,14 +229,6 @@ export const getCommunityPosts = async (
         break;
     }
     
-    // Add is_liked_by_user flag
-    if (currentUserId) {
-      allPosts = allPosts.map(post => ({
-        ...post,
-        is_liked_by_user: userLikes[post.id]?.includes(currentUserId) || false
-      }));
-    }
-    
     // Apply pagination
     const paginatedPosts = allPosts.slice(offset, offset + limit);
     
@@ -245,7 +241,7 @@ export const getCommunityPosts = async (
     throw new ApiError(
       error instanceof Error ? error.message : 'Unknown error occurred while fetching posts',
       500,
-      { limit, offset, sortBy }
+      { limit, error }
     );
   }
 };
@@ -257,34 +253,19 @@ export const getCommunityPosts = async (
  */
 export const createCommunityPost = async (content: string): Promise<CommunityPost> => {
   try {
-    // Get current user
-    const { data: userData, error: userError } = await supabase.auth.getUser();
-    
-    if (userError) {
-      throw new ApiError(
-        `Authentication error: ${userError.message}`,
-        401,
-        { userError }
-      );
-    }
-    
-    if (!userData?.user) {
-      throw new ApiError('User not authenticated', 401);
-    }
-    
     // Create new post
     const newPost: CommunityPost = {
       id: `user-${Date.now()}`,
-      user_id: userData.user.id,
+      user_id: MOCK_USER.id,
       content,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
       likes_count: 0,
       comments_count: 0,
       author: {
-        username: userData.user.email?.split('@')[0] || 'user',
-        full_name: userData.user.user_metadata?.full_name || 'User',
-        avatar_url: userData.user.user_metadata?.avatar_url || null
+        username: MOCK_USER.username,
+        full_name: MOCK_USER.full_name,
+        avatar_url: MOCK_USER.avatar_url
       },
       is_liked_by_user: false
     };
@@ -301,7 +282,7 @@ export const createCommunityPost = async (content: string): Promise<CommunityPos
     throw new ApiError(
       error instanceof Error ? error.message : 'Unknown error occurred while creating post',
       500,
-      { content }
+      { error }
     );
   }
 };
@@ -317,23 +298,6 @@ export const togglePostLike = async (
   action: 'like' | 'unlike'
 ): Promise<{ success: boolean }> => {
   try {
-    // Get current user
-    const { data: userData, error: userError } = await supabase.auth.getUser();
-    
-    if (userError) {
-      throw new ApiError(
-        `Authentication error: ${userError.message}`,
-        401,
-        { userError }
-      );
-    }
-    
-    if (!userData?.user) {
-      throw new ApiError('User not authenticated', 401);
-    }
-    
-    const userId = userData.user.id;
-    
     // Initialize likes array for this post if it doesn't exist
     if (!userLikes[postId]) {
       userLikes[postId] = [];
@@ -341,8 +305,8 @@ export const togglePostLike = async (
     
     if (action === 'like') {
       // Add like if not already liked
-      if (!userLikes[postId].includes(userId)) {
-        userLikes[postId].push(userId);
+      if (!userLikes[postId].includes(MOCK_USER.id)) {
+        userLikes[postId].push(MOCK_USER.id);
         
         // Update post like count
         const postToUpdate = [...MOCK_POSTS, ...userPosts].find(p => p.id === postId);
@@ -352,7 +316,7 @@ export const togglePostLike = async (
       }
     } else {
       // Remove like
-      userLikes[postId] = userLikes[postId].filter(id => id !== userId);
+      userLikes[postId] = userLikes[postId].filter(id => id !== MOCK_USER.id);
       
       // Update post like count
       const postToUpdate = [...MOCK_POSTS, ...userPosts].find(p => p.id === postId);
@@ -370,7 +334,7 @@ export const togglePostLike = async (
     throw new ApiError(
       error instanceof Error ? error.message : `Unknown error occurred while ${action === 'like' ? 'liking' : 'unliking'} post`,
       500,
-      { postId, action }
+      { error }
     );
   }
 };
@@ -395,7 +359,7 @@ export const getPostComments = async (postId: string): Promise<Comment[]> => {
     throw new ApiError(
       error instanceof Error ? error.message : 'Unknown error occurred while fetching comments',
       500,
-      { postId }
+      { error }
     );
   }
 };
@@ -408,32 +372,17 @@ export const getPostComments = async (postId: string): Promise<Comment[]> => {
  */
 export const addComment = async (postId: string, content: string): Promise<Comment> => {
   try {
-    // Get current user
-    const { data: userData, error: userError } = await supabase.auth.getUser();
-    
-    if (userError) {
-      throw new ApiError(
-        `Authentication error: ${userError.message}`,
-        401,
-        { userError }
-      );
-    }
-    
-    if (!userData?.user) {
-      throw new ApiError('User not authenticated', 401);
-    }
-    
     // Create new comment
     const newComment: Comment = {
       id: `comment-${Date.now()}`,
       post_id: postId,
-      user_id: userData.user.id,
+      user_id: MOCK_USER.id,
       content,
       created_at: new Date().toISOString(),
       author: {
-        username: userData.user.email?.split('@')[0] || 'user',
-        full_name: userData.user.user_metadata?.full_name || 'User',
-        avatar_url: userData.user.user_metadata?.avatar_url || null
+        username: MOCK_USER.username,
+        full_name: MOCK_USER.full_name,
+        avatar_url: MOCK_USER.avatar_url
       }
     };
     
@@ -460,7 +409,7 @@ export const addComment = async (postId: string, content: string): Promise<Comme
     throw new ApiError(
       error instanceof Error ? error.message : 'Unknown error occurred while adding comment',
       500,
-      { postId, content }
+      { error }
     );
   }
 };
