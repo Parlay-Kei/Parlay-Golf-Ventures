@@ -22,6 +22,8 @@ import {
   UserIcon,
   UsersIcon,
 } from 'lucide-react';
+import ContributionLandingPage from './components/contribution/ContributionLandingPage';
+import Upload from './pages/Upload';
 
 // Import pages directly to avoid lazy loading issues
 import Index from './pages/Index';
@@ -274,7 +276,7 @@ const AppContent = () => {
             element={
               <ProtectedRoute>
                 <RouteWithErrorBoundary routeName="UploadSwing">
-                  <MaintenancePage title="Swing Upload" />
+                  <Upload />
                 </RouteWithErrorBoundary>
               </ProtectedRoute>
             } 
@@ -284,7 +286,7 @@ const AppContent = () => {
             element={
               <ProtectedRoute>
                 <RouteWithErrorBoundary routeName="Contribute">
-                  <MaintenancePage title="Contribute Content" />
+                  <ContributionLandingPage />
                 </RouteWithErrorBoundary>
               </ProtectedRoute>
             } 
