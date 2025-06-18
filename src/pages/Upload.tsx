@@ -13,28 +13,62 @@ import withErrorBoundary from '@/components/withErrorBoundary';
 
 const Upload = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
-  const handleSubmit = (e: React.FormEvent) => {
+  const [step, setStep] = useState(1);
+  const [form, setForm] = useState({
+    videoLink: '',
+    firstName: '',
+    lastName: '',
+    email: '',
+    city: '',
+    state: '',
+    phone: '',
+    description: '',
+    consent: false,
+  });
+
+  const handleChange = (e) => {
+    const { id, value, type, checked } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [id]: type === 'checkbox' ? checked : value,
+    }));
+  };
+
+  const handleNext = (e) => {
+    e?.preventDefault();
+    setStep((prev) => prev + 1);
+  };
+
+  const handleBack = (e) => {
+    e?.preventDefault();
+    setStep((prev) => prev - 1);
+  };
+
+  const handleSubmit = (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
-    // Simulate form submission
     setTimeout(() => {
       setIsSubmitting(false);
       toast.success("Your swing video has been submitted! We'll review it shortly.");
-      
-      // Reset form (in a real app, we'd use form state)
-      const form = e.target as HTMLFormElement;
-      form.reset();
+      setStep(1);
+      setForm({
+        videoLink: '',
+        firstName: '',
+        lastName: '',
+        email: '',
+        city: '',
+        state: '',
+        phone: '',
+        description: '',
+        consent: false,
+      });
     }, 1500);
   };
-  
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      
       <main className="flex-grow">
-        {/* Hero Section */}
         <div className="bg-pgv-green py-12">
           <div className="container mx-auto px-4 text-center">
             <h1 className="font-serif text-3xl md:text-4xl font-bold text-white mb-4">
@@ -46,102 +80,114 @@ const Upload = () => {
             </p>
           </div>
         </div>
-        
-        {/* Form Section */}
         <div className="container mx-auto px-4 py-12 md:py-16">
           <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-6 md:p-8">
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={step === 4 ? handleSubmit : handleNext}>
               <div className="space-y-6">
-                <div className="space-y-4">
-                  <h2 className="font-serif text-2xl font-bold text-gray-900">Personal Information</h2>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="firstName">First Name</Label>
-                      <Input id="firstName" placeholder="Enter your first name" required />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="lastName">Last Name</Label>
-                      <Input id="lastName" placeholder="Enter your last name" required />
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email Address</Label>
-                    <Input id="email" type="email" placeholder="you@example.com" required />
-                  </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="city">City</Label>
-                      <Input id="city" placeholder="Your city" required />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="state">State</Label>
-                      <Input id="state" placeholder="Your state" required />
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="phone">Phone Number (Optional)</Label>
-                    <Input id="phone" placeholder="(123) 456-7890" />
-                  </div>
-                </div>
-                
-                <div className="space-y-4">
-                  <h2 className="font-serif text-2xl font-bold text-gray-900">Swing Video</h2>
-                  
-                  <div className="space-y-2">
+                {step === 1 && (
+                  <div className="space-y-4">
+                    <h2 className="font-serif text-2xl font-bold text-gray-900">Swing Video</h2>
                     <Label htmlFor="videoLink">Video Link</Label>
-                    <Input 
-                      id="videoLink" 
-                      placeholder="YouTube, Vimeo, or other video link" 
-                      required 
+                    <Input
+                      id="videoLink"
+                      placeholder="YouTube, Vimeo, or other video link"
+                      value={form.videoLink}
+                      onChange={handleChange}
+                      required
                     />
                     <p className="text-sm text-gray-500 mt-1">
                       Please provide a link to your swing video (YouTube, Vimeo, Instagram, etc.)
                     </p>
                   </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="description">About Your Golf Journey</Label>
-                    <Textarea 
-                      id="description" 
-                      placeholder="Tell us about your golf experience, goals, and any challenges you've faced..." 
+                )}
+                {step === 2 && (
+                  <div className="space-y-4">
+                    <h2 className="font-serif text-2xl font-bold text-gray-900">Personal Information</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="firstName">First Name</Label>
+                        <Input id="firstName" value={form.firstName} onChange={handleChange} required />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="lastName">Last Name</Label>
+                        <Input id="lastName" value={form.lastName} onChange={handleChange} required />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="email">Email Address</Label>
+                      <Input id="email" type="email" value={form.email} onChange={handleChange} required />
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="city">City</Label>
+                        <Input id="city" value={form.city} onChange={handleChange} required />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="state">State</Label>
+                        <Input id="state" value={form.state} onChange={handleChange} required />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="phone">Phone Number (Optional)</Label>
+                      <Input id="phone" value={form.phone} onChange={handleChange} />
+                    </div>
+                  </div>
+                )}
+                {step === 3 && (
+                  <div className="space-y-4">
+                    <h2 className="font-serif text-2xl font-bold text-gray-900">About Your Golf Journey</h2>
+                    <Label htmlFor="description">Description</Label>
+                    <Textarea
+                      id="description"
+                      placeholder="Tell us about your golf experience, goals, and any challenges you've faced..."
                       rows={4}
+                      value={form.description}
+                      onChange={handleChange}
                     />
                   </div>
-                </div>
-                
-                <div className="flex items-start space-x-2">
-                  <Checkbox id="consent" required />
-                  <div className="grid gap-1.5 leading-none">
-                    <Label
-                      htmlFor="consent"
-                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                    >
-                      I consent to Parlay Golf Ventures using my submitted content
-                    </Label>
-                    <p className="text-sm text-gray-500">
-                      By checking this box, you agree that we may use your submitted videos and information
-                      for promotional purposes and talent identification.
-                    </p>
+                )}
+                {step === 4 && (
+                  <div className="space-y-4">
+                    <h2 className="font-serif text-2xl font-bold text-gray-900">Consent</h2>
+                    <div className="flex items-start space-x-2">
+                      <Checkbox id="consent" checked={form.consent} onChange={handleChange} required />
+                      <div className="grid gap-1.5 leading-none">
+                        <Label htmlFor="consent" className="text-sm font-medium leading-none">
+                          I consent to Parlay Golf Ventures using my submitted content
+                        </Label>
+                        <p className="text-sm text-gray-500">
+                          By checking this box, you agree that we may use your submitted videos and information
+                          for promotional purposes and talent identification.
+                        </p>
+                      </div>
+                    </div>
                   </div>
+                )}
+                <div className="flex justify-between">
+                  {step > 1 && (
+                    <Button type="button" variant="outline" onClick={handleBack}>
+                      Back
+                    </Button>
+                  )}
+                  {step < 4 && (
+                    <Button type="submit" className="ml-auto">
+                      Next
+                    </Button>
+                  )}
+                  {step === 4 && (
+                    <Button
+                      type="submit"
+                      className="w-full bg-pgv-green hover:bg-pgv-green/90"
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? "Submitting..." : "Submit Your Swing"}
+                    </Button>
+                  )}
                 </div>
-                
-                <Button
-                  type="submit"
-                  className="w-full bg-pgv-green hover:bg-pgv-green/90"
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? "Submitting..." : "Submit Your Swing"}
-                </Button>
               </div>
             </form>
           </div>
         </div>
-
-        {/* AI Analysis section - only for Aspiring and Breakthrough tiers */}
         <FeatureGate feature="AI_ANALYSIS">
           <section className="mb-12">
             <h2 className="text-2xl font-semibold mb-4">AI Analysis</h2>
@@ -151,7 +197,6 @@ const Upload = () => {
           </section>
         </FeatureGate>
       </main>
-      
       <Footer />
     </div>
   );

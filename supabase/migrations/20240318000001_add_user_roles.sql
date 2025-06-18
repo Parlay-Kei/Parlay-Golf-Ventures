@@ -1,13 +1,6 @@
 -- Create user role enum
 CREATE TYPE user_role AS ENUM ('member', 'mentor', 'admin');
 
--- Add role and verification columns to auth.users
-ALTER TABLE auth.users
-ADD COLUMN role user_role DEFAULT 'member',
-ADD COLUMN is_verified BOOLEAN DEFAULT false,
-ADD COLUMN verification_token TEXT,
-ADD COLUMN verification_token_expires_at TIMESTAMP WITH TIME ZONE;
-
 -- Create function to check if user is a mentor
 CREATE OR REPLACE FUNCTION is_mentor(user_id UUID)
 RETURNS BOOLEAN AS $$

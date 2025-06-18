@@ -4,7 +4,7 @@ CREATE TYPE subscription_tier AS ENUM ('driven', 'aspiring', 'breakthrough');
 -- Create subscriptions table
 CREATE TABLE IF NOT EXISTS subscriptions (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    user_id UUID NOT NULL REFERENCES academy_users(id),
+    user_id UUID NOT NULL REFERENCES auth.users(id),
     tier subscription_tier NOT NULL,
     status VARCHAR(50) NOT NULL,
     current_period_start TIMESTAMP WITH TIME ZONE NOT NULL,

@@ -23,31 +23,31 @@ interface MockAuthResponse {
   };
 }
 
+// Mock query builder that matches real Supabase client's method chain signatures
 interface MockQueryBuilder {
   eq: (column: string, value: string | number | boolean) => MockQueryBuilder;
   in: (column: string, values: (string | number | boolean)[]) => MockQueryBuilder;
   containedBy: (column: string, values: (string | number | boolean)[]) => MockQueryBuilder;
   textSearch: (column: string, query: string, options?: Record<string, unknown>) => MockQueryBuilder;
-  single: () => MockQueryBuilder;
+  single: () => Promise<{ data: unknown | null; error: AuthError | null }>;
   order: (column: string, options?: Record<string, unknown>) => MockQueryBuilder;
   limit: (count: number) => MockQueryBuilder;
   range: (from: number, to: number) => MockQueryBuilder;
   select: (columns?: string | string[], options?: Record<string, unknown>) => MockQueryBuilder;
+  // The final method that returns a Promise
   then: (onfulfilled: (value: { data: unknown[]; error: AuthError | null; count?: number }) => unknown) => Promise<unknown>;
+  // Add Promise methods to make it compatible with real client
+  catch: (onrejected: (reason: unknown) => unknown) => Promise<unknown>;
+  finally: (onfinally: () => void) => Promise<unknown>;
+  [Symbol.toStringTag]: string;
 }
 
 interface MockTableBuilder {
   select: (columns?: string) => MockQueryBuilder;
-  insert: (values: Record<string, unknown>) => Promise<{ data: unknown | null; error: AuthError | null }>;
-  update: (values: Record<string, unknown>) => {
-    eq: (column: string, value: string | number | boolean) => Promise<{ data: unknown | null; error: AuthError | null }>;
-    match: (criteria: Record<string, unknown>) => Promise<{ data: unknown | null; error: AuthError | null }>;
-  };
-  delete: () => {
-    eq: (column: string, value: string | number | boolean) => Promise<{ data: unknown | null; error: AuthError | null }>;
-    match: (criteria: Record<string, unknown>) => Promise<{ data: unknown | null; error: AuthError | null }>;
-  };
-  upsert: (values: Record<string, unknown>) => Promise<{ data: unknown | null; error: AuthError | null }>;
+  insert: (values: Record<string, unknown>) => MockQueryBuilder;
+  update: (values: Record<string, unknown>) => MockQueryBuilder;
+  delete: () => MockQueryBuilder;
+  upsert: (values: Record<string, unknown>) => MockQueryBuilder;
 }
 
 interface MockStorageBucket {
@@ -75,6 +75,29 @@ interface MockSupabaseClient {
   };
 }
 
+// Create a mock query builder that matches real Supabase client's method chain
+const createMockQueryBuilder = (): MockQueryBuilder => {
+  const builder: MockQueryBuilder = {
+    eq: (column, value) => builder,
+    in: (column, values) => builder,
+    containedBy: (column, values) => builder,
+    textSearch: (column, query, options) => builder,
+    single: () => Promise.resolve({ data: null, error: null }),
+    order: (column, options) => builder,
+    limit: (count) => builder,
+    range: (from, to) => builder,
+    select: (columns, options) => builder,
+    then: (onfulfilled) => Promise.resolve(onfulfilled({ data: [], error: null, count: 0 })),
+    catch: (onrejected) => Promise.resolve(onrejected(new Error('Mock error'))),
+    finally: (onfinally) => {
+      onfinally();
+      return Promise.resolve({ data: [], error: null, count: 0 });
+    },
+    [Symbol.toStringTag]: 'MockQueryBuilder'
+  };
+  return builder;
+};
+
 // Create a more robust mock Supabase client for development when environment variables are missing
 const createMockClient = (): MockSupabaseClient => {
   console.warn('Using mock Supabase client in development mode');
@@ -94,31 +117,11 @@ const createMockClient = (): MockSupabaseClient => {
       updateUser: () => Promise.resolve({ error: null, data: { user: null } })
     },
     from: (table: string) => ({
-      select: (columns: string = '*') => {
-        const builder: MockQueryBuilder = {
-          eq: (column, value) => builder,
-          in: (column, values) => builder,
-          containedBy: (column, values) => builder,
-          textSearch: (column, query, options) => builder,
-          single: () => builder,
-          order: (column, options) => builder,
-          limit: (count) => builder,
-          range: (from, to) => builder,
-          select: (columns, options) => builder,
-          then: (onfulfilled) => Promise.resolve(onfulfilled({ data: [], error: null, count: 0 }))
-        };
-        return builder;
-      },
-      insert: (values: Record<string, unknown>) => Promise.resolve({ data: null, error: null }),
-      update: (values: Record<string, unknown>) => ({
-        eq: (column: string, value: string | number | boolean) => Promise.resolve({ data: null, error: null }),
-        match: (criteria: Record<string, unknown>) => Promise.resolve({ data: null, error: null })
-      }),
-      delete: () => ({
-        eq: (column: string, value: string | number | boolean) => Promise.resolve({ data: null, error: null }),
-        match: (criteria: Record<string, unknown>) => Promise.resolve({ data: null, error: null })
-      }),
-      upsert: (values: Record<string, unknown>) => Promise.resolve({ data: null, error: null })
+      select: (columns: string = '*') => createMockQueryBuilder(),
+      insert: (values: Record<string, unknown>) => createMockQueryBuilder(),
+      update: (values: Record<string, unknown>) => createMockQueryBuilder(),
+      delete: () => createMockQueryBuilder(),
+      upsert: (values: Record<string, unknown>) => createMockQueryBuilder()
     }),
     rpc: (fn: string, params: Record<string, unknown>) => Promise.resolve({ data: null, error: null }),
     storage: {

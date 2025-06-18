@@ -42,13 +42,6 @@ CREATE TRIGGER log_role_change
   WHEN (OLD.role IS DISTINCT FROM NEW.role)
   EXECUTE FUNCTION log_user_action('role_change');
 
--- Create trigger for verification status changes
-CREATE TRIGGER log_verification_change
-  AFTER UPDATE OF is_verified ON auth.users
-  FOR EACH ROW
-  WHEN (OLD.is_verified IS DISTINCT FROM NEW.is_verified)
-  EXECUTE FUNCTION log_user_action('verification_status_change');
-
 -- Create RLS policies
 ALTER TABLE audit_logs ENABLE ROW LEVEL SECURITY;
 

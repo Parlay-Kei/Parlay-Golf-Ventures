@@ -1,3 +1,40 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+/* DO NOT DELETE THESE TAILWIND IMPORTS, OTHERWISE THE STYLING WILL NOT RENDER AT ALL */
+/* Custom animation keyframes */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(22, 101, 52, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(22, 101, 52, 0.8);
+  }
+}
+.pulse-glow {
+  animation: pulse-glow 2s infinite;
+}
+@keyframes swing-animation {
+  0% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-20deg);
+  }
+  50% {
+    transform: rotate(15deg);
+  }
+  75% {
+    transform: rotate(-10deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+.swing-animation:hover {
+  animation: swing-animation 1s ease-in-out;
+}
+
 @import "./styles/modern.css";
 @tailwind base;
 @tailwind components;

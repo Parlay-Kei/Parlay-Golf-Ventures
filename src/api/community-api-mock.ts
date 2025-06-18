@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase';
+// Remove the Supabase import - this is a pure mock API
 import { ApiError } from './search-api';
 
 export type CommunityPost = {
@@ -205,19 +205,22 @@ export const getCommunityPosts = async (
 ): Promise<{ posts: CommunityPost[]; total: number }> => {
   try {
     // Combine mock and user-generated posts
-    let allPosts = [...MOCK_POSTS, ...userPosts];
+    const allPosts = [...MOCK_POSTS, ...userPosts];
+    
+    // Create a mutable copy for sorting
+    const sortedPosts = [...allPosts];
     
     // Sort posts
     switch (sortBy) {
       case 'latest':
-        allPosts.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+        sortedPosts.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
         break;
       case 'popular':
-        allPosts.sort((a, b) => b.likes_count - a.likes_count);
+        sortedPosts.sort((a, b) => b.likes_count - a.likes_count);
         break;
       case 'trending':
         // Trending combines recency and popularity
-        allPosts.sort((a, b) => {
+        sortedPosts.sort((a, b) => {
           const recencyA = new Date(a.created_at).getTime();
           const recencyB = new Date(b.created_at).getTime();
           const popularityA = a.likes_count * 2 + a.comments_count;
@@ -230,7 +233,7 @@ export const getCommunityPosts = async (
     }
     
     // Apply pagination
-    const paginatedPosts = allPosts.slice(offset, offset + limit);
+    const paginatedPosts = sortedPosts.slice(offset, offset + limit);
     
     return {
       posts: paginatedPosts,

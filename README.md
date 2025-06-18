@@ -39,6 +39,47 @@ Manage beta access with:
 - Beta user tracking
 - Feedback collection
 
+## Development
+
+### Prerequisites
+
+- Node.js 18+ 
+- npm or yarn
+- Supabase account and project
+
+### Setup
+
+1. Clone the repository
+2. Install dependencies: `npm install`
+3. Copy `.env.example` to `.env` and fill in your Supabase credentials
+4. Run the development server: `npm run dev`
+
+### Available Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build
+- `npm run test` - Run tests
+- `npm run lint` - Run ESLint
+- `npm run lint:fix` - Fix ESLint errors
+- `npm run verify-supabase` - Verify Supabase tables and connection
+- `npm run type-check` - Run TypeScript type checking
+
+### Database Verification
+
+To verify your Supabase connection and tables:
+
+```bash
+npm run verify-supabase
+```
+
+This script will:
+- Test connection to Supabase
+- Check authentication
+- Verify all tables exist and are accessible
+- Show sample data from each table
+- Provide troubleshooting tips if issues are found
+
 ## Development Setup
 
 The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)

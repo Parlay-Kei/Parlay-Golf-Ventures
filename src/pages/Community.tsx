@@ -22,10 +22,12 @@ import {
 } from "@/api/community-api"; 
 import CommunityPost from "@/components/CommunityPost";
 import withErrorBoundary from '@/components/withErrorBoundary';
+import { supabase } from '@/lib/supabase';
 
 export default withErrorBoundary(function Community() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [crewId, setCrewId] = useState<string | null>(null);
   const [posts, setPosts] = useState<PostType[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -39,14 +41,29 @@ export default withErrorBoundary(function Community() {
   // Load posts when component mounts or sort/page changes
   useEffect(() => {
     loadPosts();
-  }, [sortBy, page, loadPosts]);
+  }, [sortBy, page, crewId]);
+  
+  // Fetch user's crew ID
+  useEffect(() => {
+    const fetchCrewId = async () => {
+      if (user) {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('crew_id')
+          .eq('id', user.id)
+          .single();
+        if (data && data.crew_id) setCrewId(data.crew_id);
+      }
+    };
+    fetchCrewId();
+  }, [user]);
   
   // Load posts from API
   const loadPosts = async (append: boolean = false) => {
     try {
       setLoading(true);
       const offset = (page - 1) * limit;
-      const { posts: newPosts, total: totalPosts } = await getCommunityPosts(limit, offset, sortBy);
+      const { posts: newPosts, total: totalPosts } = await getCommunityPosts(limit, offset, sortBy, crewId || undefined);
       
       setPosts(prev => append ? [...prev, ...newPosts] : newPosts);
       setTotal(totalPosts);
@@ -108,11 +125,11 @@ export default withErrorBoundary(function Community() {
       
       <main className="flex-grow container mx-auto px-4 py-8">
         <div className="max-w-3xl mx-auto">
-          <h1 className="text-3xl font-bold mb-2">Community</h1>
-          <p className="text-muted-foreground mb-6">Connect with other golfers and share your journey</p>
+          <h1 className="text-3xl font-bold mb-2">Your Crew Feed</h1>
+          <p className="text-muted-foreground mb-6">Posts from your crew only. Connect and share your journey!</p>
           
           {/* Create Post Card */}
-          <Card className="mb-8">
+          <Card className="mb-8 border-2 border-pgv-green shadow-lg">
             <CardContent className="pt-6">
               <div className="flex gap-4 flex-col sm:flex-row">
                 <Avatar className="h-10 w-10 hidden sm:block">
@@ -121,8 +138,8 @@ export default withErrorBoundary(function Community() {
                 </Avatar>
                 <div className="flex-grow">
                   <Textarea
-                    placeholder={user ? "What's on your mind?" : "Sign in to post in the community"}
-                    className="min-h-[100px] mb-3"
+                    placeholder={user ? "What's on your mind? (Post to your crew)" : "Sign in to post in the community"}
+                    className="min-h-[100px] mb-3 border-2 border-pgv-green focus:ring-pgv-green"
                     value={newPostContent}
                     onChange={(e) => setNewPostContent(e.target.value)}
                     disabled={!user || creating}
@@ -131,15 +148,15 @@ export default withErrorBoundary(function Community() {
                     <Button 
                       onClick={handleCreatePost} 
                       disabled={!user || creating || !newPostContent.trim()}
-                      className="w-full sm:w-auto"
+                      className="w-full sm:w-auto bg-pgv-green text-white font-bold border-2 border-pgv-green shadow-md hover:bg-pgv-green/90 hover:shadow-lg transition"
                     >
                       {creating ? (
                         <>
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Posting...
+                          Posting... (Crew)
                         </>
                       ) : (
-                        <>Post</>  
+                        <>Post to Crew</>  
                       )}
                     </Button>
                   </div>
