@@ -9,14 +9,26 @@ import { betaService } from "@/lib/services/betaService";
 import withErrorBoundary from '@/components/withErrorBoundary';
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
-import { App as OnboardingApp } from "../App";
+// import App from './App';
+// const OnboardingApp = App;
+
+// Update the path below to the correct location of OnboardingApp or create the file if missing
+// Example: import OnboardingApp from '@/components/OnboardingApp';
+import OnboardingFlow from '@/components/onboarding/OnboardingFlow';
+
+// Define profile type
+interface UserProfile {
+  id: string;
+  onboarding_completed?: boolean;
+  [key: string]: any; // Allow for other properties
+}
 
 const Index = () => {
   const observerRefs = useRef<(HTMLElement | null)[]>([]);
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const [isBetaMode, setIsBetaMode] = useState(false);
   const { user } = useAuth();
-  const [profile, setProfile] = useState(null);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(false);
   useScrollToTop();
 
@@ -86,7 +98,7 @@ const Index = () => {
 
   // If user is logged in and onboarding is not completed, show onboarding
   if (user && profile && !profile.onboarding_completed) {
-    return <OnboardingApp />;
+    return <OnboardingFlow />;
   }
 
   return (

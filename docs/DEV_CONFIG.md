@@ -243,3 +243,84 @@ import ErrorBoundary from '@/components/ErrorBoundary';
 ---
 
 For questions or to extend error handling, see `src/components/ErrorBoundary.tsx` and `src/components/withErrorBoundary.tsx`.
+
+## Vite Dev Server Port Configuration
+
+The Vite dev server is configured to run on port 8080 by default. If port 8080 is in use, Vite will attempt to use the next available port (e.g., 8081). To explicitly set the port, update the `server.port` value in `vite.config.ts` or use the `--port` flag when running `npm run dev`:
+
+```bash
+npm run dev -- --port=8080
+```
+
+If you encounter a port conflict, kill the process using the port or choose a different port.
+
+---
+
+## Supabase Table Verification Script
+
+A script is provided to verify that all required Supabase tables exist and are correctly configured:
+
+- Script: `scripts/verify-supabase-tables.js`
+- Usage:
+  ```bash
+  npm run verify:supabase
+  ```
+- Purpose: Checks for missing or misconfigured tables, columns, and RLS policies. Run this after migrations or before deployment to ensure data integrity.
+
+---
+
+## Netlify Deployment & Environment Variables
+
+To deploy to Netlify, ensure the following environment variables are set in the Netlify dashboard:
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_ANON_KEY`
+- `VITE_SENTRY_DSN`
+- `VITE_STRIPE_PUBLIC_KEY`
+
+Sentry monitoring is enabled in all environments where `VITE_SENTRY_DSN` is set. See the Sentry dashboard for error reports.
+
+---
+
+## Lint and TypeScript Policy
+
+All lint and TypeScript errors must be resolved before merging to main. See `docs/developer-todo-list.md` for the zero-lint and zero-`any` policy. Run:
+
+```bash
+npm run lint
+npm run type-check
+```
+
+---
+
+## Mobile Navigation Accessibility
+
+The mobile navigation menu now includes:
+- Focus trap (keyboard focus stays within menu)
+- Keyboard navigation (Tab, Shift+Tab, Arrow keys, Escape to close)
+- Screen reader compatibility (ARIA roles and labels)
+- Touch and mouse support
+
+**Testing Checklist:**
+- [x] Tab/Shift+Tab cycles through menu items
+- [x] Arrow keys navigate between items
+- [x] Escape closes the menu
+- [x] Menu is announced by screen readers
+- [x] Works on iOS, Android, and desktop browsers
+
+---
+
+## 2025 Bundle-Size & Dependency Optimization Audit
+
+A comprehensive audit and optimization pass was completed in June 2025. The following improvements were made to minimize bundle size and maximize performance:
+
+- **Manual chunking in Vite:** All major libraries (react, framer-motion, radix, stripe, supabase) are split into separate chunks for better caching and smaller initial loads.
+- **Stripe and Supabase lazy-loading:** Stripe and Supabase clients are only loaded when needed (e.g., on checkout or file upload), not in the initial bundle.
+- **No SendGrid, react-select, or axios in client:** Confirmed that no server-only or heavy client libraries are present in the browser bundle.
+- **Optimal date-fns usage:** Only named imports are used, with no wildcard or unnecessary locale imports.
+- **Radix UI per-component imports:** Only the components actually used are imported, not the whole suite.
+- **Single version of tailwind-merge:** Confirmed only one version is present, avoiding duplication.
+
+**Result:**
+- The project is now highly optimized for bundle size and performance. All major sources of bloat have been addressed, and the codebase is ready for fast, efficient production builds.
+
+---

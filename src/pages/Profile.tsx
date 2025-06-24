@@ -2,7 +2,6 @@ import { useState, useEffect, ChangeEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useFeatures } from "@/lib/features";
-import { supabase } from "@/lib/supabase";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -45,6 +44,14 @@ interface ProfileData {
   created_at: string;
 }
 
+async function getSupabase() {
+  const { createClient } = await import('@supabase/supabase-js');
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
+}
+
 export default withErrorBoundary(function Profile() {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
@@ -85,6 +92,7 @@ export default withErrorBoundary(function Profile() {
       }
       
       try {
+        const supabase = await getSupabase();
         const { data, error } = await supabase
           .from("profiles")
           .select("*")
@@ -146,6 +154,7 @@ export default withErrorBoundary(function Profile() {
     setUploadingAvatar(true);
     
     try {
+      const supabase = await getSupabase();
       // Generate a unique filename
       const fileExt = avatarFile.name.split('.').pop();
       const fileName = `${user.id}-${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
@@ -194,6 +203,7 @@ export default withErrorBoundary(function Profile() {
   // Save profile changes
   const saveProfile = async () => {
     try {
+      const supabase = await getSupabase();
       // Validate form data
       const result = profileSchema.safeParse({
         full_name: fullName,
@@ -245,6 +255,7 @@ export default withErrorBoundary(function Profile() {
   // Change password
   const changePassword = async () => {
     try {
+      const supabase = await getSupabase();
       // Validate form data
       const result = passwordSchema.safeParse({
         currentPassword,

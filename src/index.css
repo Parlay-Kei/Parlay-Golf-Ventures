@@ -1,7 +1,6 @@
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
-/* DO NOT DELETE THESE TAILWIND IMPORTS, OTHERWISE THE STYLING WILL NOT RENDER AT ALL */
+@import "./styles/modern.css";
+/* Using @tailwind directives instead of imports */
+/* DO NOT DELETE THESE TAILWIND DIRECTIVES, OTHERWISE THE STYLING WILL NOT RENDER AT ALL */
 /* Custom animation keyframes */
 @keyframes pulse-glow {
   0%, 100% {
@@ -35,7 +34,6 @@
   animation: swing-animation 1s ease-in-out;
 }
 
-@import "./styles/modern.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

@@ -1,10 +1,12 @@
-import { createClient } from '@supabase/supabase-js';
 import { toast } from 'react-hot-toast';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+async function getSupabase() {
+  const { createClient } = await import('@supabase/supabase-js');
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
+}
 
 export interface Profile {
   id: string;
@@ -40,6 +42,7 @@ export interface ProfileUpdate {
 export const profileApi = {
   async getProfile(userId: string): Promise<Profile> {
     try {
+      const supabase = await getSupabase();
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
@@ -56,6 +59,7 @@ export const profileApi = {
 
   async updateProfile(userId: string, updates: ProfileUpdate): Promise<Profile> {
     try {
+      const supabase = await getSupabase();
       const { data, error } = await supabase
         .from('profiles')
         .update(updates)
@@ -76,6 +80,7 @@ export const profileApi = {
 
   async uploadAvatar(userId: string, file: File): Promise<string> {
     try {
+      const supabase = await getSupabase();
       const fileExt = file.name.split('.').pop();
       const fileName = `${userId}-${Math.random()}.${fileExt}`;
       const filePath = `avatars/${fileName}`;
@@ -100,6 +105,7 @@ export const profileApi = {
 
   async deleteAvatar(userId: string): Promise<void> {
     try {
+      const supabase = await getSupabase();
       const { data: profile } = await supabase
         .from('profiles')
         .select('avatar_url')

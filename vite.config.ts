@@ -9,7 +9,7 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => ({
   plugins: [
     react(),
     visualizer({
-      open: false,
+      open: true,
       filename: 'dist/stats.html',
       gzipSize: true,
       brotliSize: true,
@@ -34,10 +34,16 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => ({
     rollupOptions: {
       output: {
         manualChunks: {
-          // Split vendor chunks for better caching
           'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-          'vendor-ui': ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-toast'],
+          'vendor-ui': [
+            '@radix-ui/react-dialog',
+            '@radix-ui/react-dropdown-menu',
+            '@radix-ui/react-toast',
+            '@floating-ui/react'
+          ],
           'vendor-utils': ['date-fns', 'zod', 'zustand'],
+          'stripe': ['@stripe/stripe-js'],
+          'supabase': ['@supabase/supabase-js'],
         },
       },
     },

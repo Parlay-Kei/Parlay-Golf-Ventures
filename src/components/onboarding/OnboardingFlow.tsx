@@ -310,4 +310,6 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
       </Card>
     </div>
   );
-} 
+}
+
+export default OnboardingFlow; 

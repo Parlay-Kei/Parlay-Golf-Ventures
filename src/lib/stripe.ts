@@ -1,4 +1,3 @@
-import { loadStripe } from '@stripe/stripe-js';
 import Stripe from 'stripe';
 import { IS_DEV_ENV } from './config/env';
 
@@ -15,9 +14,14 @@ if (!isValidPublishableKey) {
 }
 
 // Initialize Stripe client for frontend
-export const stripePromise = isValidPublishableKey 
-  ? loadStripe(stripePublishableKey)
-  : Promise.resolve(createMockStripeClient());
+export async function getStripePromise() {
+  const { loadStripe } = await import('@stripe/stripe-js');
+  if (!stripePublishableKey || stripePublishableKey.includes('your_publishable_key')) {
+    console.warn('Using mock Stripe client - Missing valid Stripe publishable key. Check your .env file.');
+    return createMockStripeClient();
+  }
+  return loadStripe(stripePublishableKey);
+}
 
 // Initialize Stripe client for backend API calls (used in API routes)
 export const stripe = isValidSecretKey
