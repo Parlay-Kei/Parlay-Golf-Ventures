@@ -1,12 +1,12 @@
 [build]
-  command = "echo 'Skipping build step and using static files directly'"
-  publish = "public"
+  command = "npm run build"
+  publish = "build"
   functions = "server/functions"
 
 [dev]
   command = "npm run dev"
-  port = 8090
-  targetPort = 8090
+  port = 8080
+  targetPort = 8080
 
 # Handle the Supabase redirects
 [[redirects]]
