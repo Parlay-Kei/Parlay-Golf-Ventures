@@ -9,6 +9,7 @@ This directory contains comprehensive documentation for the Parlay Golf Ventures
 ### Performance
 
 - [Performance Optimizations](./performance-optimizations.md) - Comprehensive guide to all performance optimizations implemented in the platform
+- [Recent Build Changes](./recent-build-changes.md) - Documentation of recent build optimization changes and improvements
 
 ### Platform Features
 
@@ -24,6 +25,7 @@ This directory contains comprehensive documentation for the Parlay Golf Ventures
 - [Debugging Guide](./debugging-guide.md) - Strategies and tools for debugging issues
 - [Development Journal](./development-journal.md) - Chronological record of development activities and decisions
 - [Pull Request Template](./pull-request-template.md) - Template for creating pull requests
+- [Email Service Migration Guide](./email-service-migration-guide.md) - Quick reference for email service changes
 
 ### Migration & Progress Tracking
 
@@ -32,6 +34,20 @@ This directory contains comprehensive documentation for the Parlay Golf Ventures
 ## Current Status
 
 ### Recent Improvements (2025-01-XX)
+
+#### ✅ Build Optimization & Performance
+- **Status**: Completed
+- **Build Time**: Improved from 1m 41s to 1m 8s (22% faster)
+- **Bundle Size**: Reduced main chunk from 740.39 kB to 580.42 kB (22% smaller)
+- **Warnings**: Eliminated all build warnings (externalization, large chunks)
+- **Chunks**: 8 well-organized chunks for better loading performance
+
+#### ✅ Email Service Architecture Refactor
+- **Status**: Completed
+- **Client-Safe Service**: Created `emailServiceClient.ts` for React components
+- **Server Separation**: Maintained original `emailService.ts` for server-side use
+- **Migration**: Updated all client components to use client-safe version
+- **Benefits**: Eliminated server-side module bundling for client
 
 #### ✅ ESLint prefer-const Rule Implementation
 - **Status**: Completed
@@ -50,6 +66,29 @@ This directory contains comprehensive documentation for the Parlay Golf Ventures
 - **Performance**: Optimized component re-renders through proper memoization
 
 ### Development Standards
+
+#### Build Configuration
+```typescript
+// Vite config optimizations
+build: {
+  chunkSizeWarningLimit: 1000, // Increased from default 500
+  external: ['@sendgrid/mail', 'path', 'fs', 'crypto'], // Server-side modules
+  manualChunks: {
+    'vendor-react': ['react', 'react-dom'],
+    'vendor-router': ['react-router-dom'],
+    // ... optimized chunk configuration
+  }
+}
+```
+
+#### Email Service Usage
+```typescript
+// ✅ Client components
+import { emailServiceClient } from '@/lib/services/emailServiceClient';
+
+// ✅ Server-side code
+import { emailService } from '@/lib/services/emailService';
+```
 
 #### ESLint Configuration
 ```javascript
@@ -78,7 +117,8 @@ If you're new to the project, we recommend starting with the following documenta
 4. Familiarize yourself with the [Debugging Guide](./debugging-guide.md) for troubleshooting issues
 5. Check the [Development Journal](./development-journal.md) to understand recent changes
 6. Review the [Performance Optimizations](./performance-optimizations.md) to understand the platform's optimization strategies
-7. Use the [Pull Request Template](./pull-request-template.md) when submitting changes
+7. Check the [Recent Build Changes](./recent-build-changes.md) for latest build improvements
+8. Use the [Pull Request Template](./pull-request-template.md) when submitting changes
 
 ## Development Workflow
 
@@ -89,12 +129,19 @@ If you're new to the project, we recommend starting with the following documenta
 - Implement proper error handling with typed interfaces
 - Use proper useEffect dependencies
 
+### Build Standards
+- Monitor bundle sizes and chunk distribution
+- Use client-safe services in React components
+- Keep server-side modules separate from client bundles
+- Clean build cache when encountering issues
+
 ### Recent Best Practices
 - **Variable Declarations**: Use `const` by default, `let` only when reassignment is needed
 - **Error Handling**: Create proper TypeScript interfaces for all errors
 - **Component Props**: Use typed interfaces for all component props
 - **State Management**: Use proper typing for all state objects
 - **Performance**: Implement useCallback and useMemo where appropriate
+- **Email Services**: Use `emailServiceClient` in components, `emailService` in server code
 
 ## Additional Resources
 
@@ -111,5 +158,6 @@ Please keep this documentation up-to-date as you make changes to the codebase. I
 - [ ] Update migration progress if applicable
 - [ ] Review and update coding standards
 - [ ] Update README with current status
+- [ ] Document build changes and optimizations
 
 For questions or suggestions regarding documentation, please contact the development team.

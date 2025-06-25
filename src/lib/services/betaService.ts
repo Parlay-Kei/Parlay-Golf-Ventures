@@ -7,7 +7,7 @@
 
 import { supabase } from '@/lib/supabase';
 import { handleApiError } from '@/lib/utils/errorHandler';
-import { emailService } from './emailService';
+import { emailServiceClient } from './emailServiceClient';
 import { v4 as uuidv4 } from 'uuid';
 
 /**
@@ -203,7 +203,7 @@ export const betaService = {
       if (!invite) throw new Error('Invite not found');
       
       // Send the invitation email
-      const emailSent = await emailService.sendBetaInvitation(invite.email, invite.code);
+      const emailSent = await emailServiceClient.sendBetaInvitation(invite.email, invite.code);
       
       if (emailSent) {
         // Update the invite status to 'sent'

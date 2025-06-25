@@ -8,7 +8,7 @@ import { contributionsApi } from '@/lib/api/contributions';
 import { toast } from 'sonner';
 import { Contribution, ContributionStatus } from '@/lib/types/contribution';
 import { useAuth } from '@/contexts/AuthContext';
-import { emailService } from '@/lib/services/emailService';
+import { emailServiceClient } from '@/lib/services/emailServiceClient';
 import { handleApiError } from '@/lib/utils/errorHandler';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
@@ -61,7 +61,7 @@ const ModerationQueue = () => {
       
       // Send email notification to contributor
       if (contribution.contributor_email) {
-        await emailService.sendApprovalNotification(
+        await emailServiceClient.sendApprovalNotification(
           contribution.contributor_email,
           contribution.title
         );
@@ -97,7 +97,7 @@ const ModerationQueue = () => {
       
       // Send email notification to contributor with rejection reason
       if (contributionToReject.contributor_email) {
-        await emailService.sendRejectionNotification(
+        await emailServiceClient.sendRejectionNotification(
           contributionToReject.contributor_email,
           contributionToReject.title,
           rejectionReason

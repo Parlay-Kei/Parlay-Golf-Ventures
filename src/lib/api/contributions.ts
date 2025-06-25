@@ -3,7 +3,7 @@ import { Contribution, ContributorType, ContributionStatus } from '@/lib/types/c
 import { supabase } from '@/lib/supabase';
 import { handleApiError, withErrorHandling } from '@/lib/utils/errorHandler';
 import { checkRateLimit, formatTimeRemaining, RateLimiter, DEFAULT_RATE_LIMITS } from '@/lib/utils/rateLimiter';
-import { emailService } from '@/lib/services/emailService';
+import { emailServiceClient } from '@/lib/services/emailServiceClient';
 
 export const contributionsApi = {
   // Create a new contribution
@@ -31,7 +31,7 @@ export const contributionsApi = {
         // For now, we'll use a placeholder moderator email for demonstration
         const moderatorEmails = ['admin@parlaygolfventures.com'];
         
-        await emailService.sendNewSubmissionNotification(
+        await emailServiceClient.sendNewSubmissionNotification(
           moderatorEmails,
           contribution.title || 'Untitled Contribution',
           contributorType

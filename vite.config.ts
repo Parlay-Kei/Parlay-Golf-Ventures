@@ -31,17 +31,55 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => ({
     ssr: false,
     // Output directory
     outDir: 'dist/client',
+    // Increase chunk size warning limit
+    chunkSizeWarningLimit: 1000,
     rollupOptions: {
+      external: [
+        // Externalize server-side modules that shouldn't be bundled for client
+        '@sendgrid/mail',
+        'path',
+        'fs',
+        'crypto'
+      ],
       output: {
         manualChunks: {
-          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-          'vendor-ui': [
+          // Core React libraries
+          'vendor-react': ['react', 'react-dom'],
+          'vendor-router': ['react-router-dom'],
+          
+          // UI libraries
+          'vendor-ui-radix': [
             '@radix-ui/react-dialog',
             '@radix-ui/react-dropdown-menu',
             '@radix-ui/react-toast',
-            '@floating-ui/react'
+            '@radix-ui/react-accordion',
+            '@radix-ui/react-alert-dialog',
+            '@radix-ui/react-avatar',
+            '@radix-ui/react-checkbox',
+            '@radix-ui/react-label',
+            '@radix-ui/react-popover',
+            '@radix-ui/react-progress',
+            '@radix-ui/react-select',
+            '@radix-ui/react-separator',
+            '@radix-ui/react-slot',
+            '@radix-ui/react-switch',
+            '@radix-ui/react-tabs',
+            '@radix-ui/react-tooltip'
           ],
-          'vendor-utils': ['date-fns', 'zod', 'zustand'],
+          'vendor-ui-other': [
+            '@floating-ui/react',
+            'class-variance-authority',
+            'clsx',
+            'tailwind-merge',
+            'lucide-react'
+          ],
+          
+          // Utility libraries
+          'vendor-utils-core': ['date-fns', 'zod'],
+          'vendor-utils-state': ['zustand'],
+          'vendor-utils-other': ['react-hook-form', '@hookform/resolvers'],
+          
+          // External services
           'stripe': ['@stripe/stripe-js'],
           'supabase': ['@supabase/supabase-js'],
         },
